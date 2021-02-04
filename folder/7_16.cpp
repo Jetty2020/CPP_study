@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstdarg>
+#include <cstdarg> //for ellipsis 생략부호
 
 using namespace std;
 
