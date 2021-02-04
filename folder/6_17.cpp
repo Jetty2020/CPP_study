@@ -10,7 +10,7 @@ int main()
 
     int max_number = numeric_limits<int>::lowest();
 
-
+    // for-each문
     for (int number : fibonacci)
         cout << number << " ";
     cout << endl;
