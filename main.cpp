@@ -1,49 +1,55 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
-#include <random>
-#include <chrono>
-
+#include <initializer_list>
 using namespace std;
 
-class Timer
+class IntArray
 {
-    using clock_t = std::chrono::high_resolution_clock;
-    using second_t = std::chrono::duration<double, std::ratio<1>>;
-
-    std::chrono::time_point<clock_t> start_time = clock_t::now();
+private:
+    unsigned m_length = 0;
+    int *m_data = nullptr;
 
 public:
-    void elapsed()
+    IntArray(unsigned length)
+        : m_length(length)
     {
-        std::chrono::time_point<clock_t> end_time = clock_t::now();
+        m_data = new int[length];
+    }
 
-        cout << std::chrono::duration_cast<second_t>(end_time - start_time).count() << endl;
+    IntArray(const std::initializer_list<int> &list)
+        : IntArray(list.size())
+    {
+        int count = 0;
+        for (auto & element : list)
+        {
+            m_data[count] = element;
+            ++count;
+        }
+    }
+
+    ~IntArray()
+    {
+        delete[] this->m_data;
+    }
+
+    friend ostream & operator << (ostream & out, IntArray & arr)
+    {
+        for(unsigned i = 0; i < arr.m_length; ++i)
+            out << arr.m_data[i] << " ";
+        out << endl;
+        return out;
     }
 };
 
 int main()
 {
-    random_device rnd_device;
-    mt19937 mersenne_engine{ rnd_device() };
+    int my_arr1[5] = { 1, 2, 3, 4, 5 };
+    int *my_arr2 = new int[5]{ 1, 2, 3, 4, 5 };
 
-    vector<int> vec(10);
-    for (unsigned int i = 0; i < vec.size(); ++i)
-        vec[i] = i;
-    
-    std::shuffle(begin(vec), end(vec), mersenne_engine);
+    // auto il = { 10, 20, 30 };
 
-    for (auto &e : vec) cout << e << " ";
-    cout <<endl;
+    IntArray int_array = { 1, 2, 3, 4, 5 };
 
-    Timer timer;
-
-    std::sort(begin(vec), end(vec));
-
-    timer.elapsed();
-
-    for (auto &e : vec) cout << e << " ";
-    cout << endl;
+    cout << int_array << endl;
 
     return 0;
 }
