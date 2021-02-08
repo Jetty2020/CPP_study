@@ -1,55 +1,93 @@
 #include <iostream>
-#include <initializer_list>
+#include <vector>
+#include <string>
 using namespace std;
 
-class IntArray
+class Doctor;
+class Patient
 {
 private:
-    unsigned m_length = 0;
-    int *m_data = nullptr;
+    string m_name;
+    vector<Doctor*> m_doctors;
 
 public:
-    IntArray(unsigned length)
-        : m_length(length)
+    Patient(string name_in)
+        : m_name(name_in)
+    {}
+
+    void addDoctor(Doctor * new_doctor)
     {
-        m_data = new int[length];
+        m_doctors.push_back(new_doctor);
     }
 
-    IntArray(const std::initializer_list<int> &list)
-        : IntArray(list.size())
+    void meetDoctors();
+
+    friend class Doctor;
+};
+
+class Doctor
+{
+private:
+    string m_name;
+    vector<Patient*> m_patients;
+
+public:
+    Doctor(string name_in)
+        : m_name(name_in)
+    {}
+
+    void addPatient(Patient * new_patient)
     {
-        int count = 0;
-        for (auto & element : list)
+        m_patients.push_back(new_patient);
+    }
+
+    void meetPatients()
+    {
+        for (auto & ele : m_patients)
         {
-            m_data[count] = element;
-            ++count;
+            cout << "Meet patient : " << ele->m_name << endl;
         }
     }
 
-    ~IntArray()
-    {
-        delete[] this->m_data;
-    }
-
-    friend ostream & operator << (ostream & out, IntArray & arr)
-    {
-        for(unsigned i = 0; i < arr.m_length; ++i)
-            out << arr.m_data[i] << " ";
-        out << endl;
-        return out;
-    }
+    friend class Patient;
 };
+
+void Patient::meetDoctors()
+{
+    for (auto & ele : m_doctors)
+    {
+        cout << "Meet doctor : " << ele->m_name << endl;
+    }
+}
 
 int main()
 {
-    int my_arr1[5] = { 1, 2, 3, 4, 5 };
-    int *my_arr2 = new int[5]{ 1, 2, 3, 4, 5 };
+    Patient *p1 = new Patient("Jack Jack");
+    Patient *p2 = new Patient("Dash");
+    Patient *p3 = new Patient("Violet");
 
-    // auto il = { 10, 20, 30 };
+    Doctor *d1 = new Doctor("Doctor K");
+    Doctor *d2 = new Doctor("Doctor L");
 
-    IntArray int_array = { 1, 2, 3, 4, 5 };
+    p1->addDoctor(d1);
+    d1->addPatient(p1);
 
-    cout << int_array << endl;
+    p2->addDoctor(d2);
+    d2->addPatient(p2);
+
+    p3->addDoctor(d1);
+    d1->addPatient(p3);
+
+    p1->meetDoctors();
+
+    d1->meetPatients();
+
+    delete p1;
+    delete p2;
+    delete p3;
+
+    delete d1;
+    delete d2;
 
     return 0;
 }
