@@ -1,44 +1,55 @@
 #include <iostream>
+using namespace std;
 
-class Base
+template <class T, int size>
+class StaticArray_BASE
 {
-public:
-    Base() {}
+private:
+    T m_array[size];
 
-    friend std::ostream& operator << (std::ostream & out, const Base &b)
+public:
+    T * getArray() { return m_array; }
+
+    T& operator[](int index)
     {
-        return b.print(out);
+        return m_array[index];
     }
 
-    virtual std::ostream& print(std::ostream& out) const
+    void print()
     {
-        out << "Base";
-        return out;
+        for (int count = 0; count < size; ++count)
+            std::cout << (*this)[count] << ' ';
+        std::cout << endl;
     }
 };
 
-class Derived : public Base
-{
-public:
-    Derived() {}
+template <class T, int size>
+class StaticArray : public StaticArray_BASE<T, size>
+{};
 
-    virtual std::ostream& print(std::ostream& out) const override
+template <int size>
+class StaticArray : public StaticArray_BASE<char, size>
+{
+    void print()
     {
-        out << "Derived";
-        return out;
+        for (int count = 0; count < size; ++count)
+            std::cout << (*this)[count];
+        std::cout << endl;
     }
 };
 
 int main()
 {
-    Base b;
-    std::cout << b << '\n';
+    StaticArray<int, 4> int4;
+    int4[0] = 1;
+    int4[1] = 2;
+    int4[2] = 3; 
+    int4[3] = 4;
 
-    Derived d;
-    std::cout << d << '\n';
+    int4.print();
 
-    Base &bref = d;
-    std::cout << bref << '\n';
+    StaticArray<char, 14> char14;
+    strcpy_s(char14.getArray(), 14, "Hello, World");
 
-    return 0;
+    char14.print();
 }
